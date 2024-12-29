@@ -9,7 +9,7 @@ int find(int arr[], int u, int v)
         return 0;
 }
 
-void unionn(int arr[], int n, int u, int v)
+void Union(int arr[], int n, int u, int v)
 {
     int temp = arr[u];
     for (int i = 0; i < n; i++)
@@ -40,7 +40,7 @@ int main()
         case 1:
             cout << "Enter elements to union: ";
             cin >> u >> v;
-            unionn(arr, n, u, v);
+            Union(arr, n, u, v);
             cout << "Union performed.\n";
             break;
         case 2:
