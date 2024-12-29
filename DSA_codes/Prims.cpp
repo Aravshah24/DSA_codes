@@ -45,7 +45,7 @@ public:
 
     void primAlgorithm(int cost[10][10], int source) {
         initializeMST(cost, source);
-        for (int i = 0; i < 9; i++) // Iterate n-1 times (10-1 = 9)
+        for (int i = 0; i < 9; i++) 
             updateMST(cost);
     }
 
