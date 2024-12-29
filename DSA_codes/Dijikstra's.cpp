@@ -1,75 +1,99 @@
 #include <iostream>
-#define INF 1000000 // A large number representing infinity
 using namespace std;
 
-// Function to find the vertex with the minimum distance value
-int minDistance(int dist[], bool sptSet[], int V) {
-    int min = INF, min_index;
+#define MAX 999
 
-    for (int v = 0; v < V; v++) {
-        if (!sptSet[v] && dist[v] < min) {
-            min = dist[v], min_index = v;
-        }
-    }
+class Dijkstras {
+public:
+    int v;
+    int dist[20], path[20];
+    int visited[20];
+    int src;
+    int cm[20][20];
+    int cnt = 0;
 
-    return min_index;
-}
-
-// Function to implement Dijkstra's algorithm
-void dijkstra(int graph[100][100], int V, int src) {
-    int dist[V]; // Output array. dist[i] will hold the shortest distance from src to i
-    bool sptSet[V]; // sptSet[i] will be true if vertex i is included in shortest path tree
-
-    // Initialize all distances as INFINITE and sptSet[] as false
-    for (int i = 0; i < V; i++) {
-        dist[i] = INF;
-        sptSet[i] = false;
-    }
-
-    // Distance of source vertex from itself is always 0
-    dist[src] = 0;
-
-    // Find shortest path for all vertices
-    for (int count = 0; count < V - 1; count++) {
-        int u = minDistance(dist, sptSet, V);
-
-        // Mark the picked vertex as processed
-        sptSet[u] = true;
-
-        // Update dist value of the adjacent vertices of the picked vertex
-        for (int v = 0; v < V; v++) {
-            if (!sptSet[v] && graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
-                dist[v] = dist[u] + graph[u][v];
+    void read() {
+        cout << "Enter the number of vertices:" << endl;
+        cin >> v;
+        cout << "Enter the cost matrix:" << endl;
+        for (int i = 0; i < v; i++) {
+            for (int j = 0; j < v; j++) {
+                cin >> cm[i][j];
             }
         }
     }
 
-    // Print the constructed distance array
-    cout << "Vertex\tDistance from Source\n";
-    for (int i = 0; i < V; i++) {
-        cout << i << "\t" << dist[i] << "\n";
-    }
-}
+    void init() {
+        cout << "Enter the source" << endl;
+        cin >> src;
+        visited[0] = src;
+        cnt = 1;
 
-int main() {
-    int V;
-    cout << "Enter the number of vertices: ";
-    cin >> V;
+        for (int i = 0; i < v; i++) {
+            if (i == src) {
+                dist[i] = 0;
+            } else {
+                dist[i] = MAX;
+            }
+        }
 
-    int graph[100][100];
-
-    cout << "Enter the adjacency matrix (enter 0 for no edge):\n";
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            cin >> graph[i][j];
+        for (int i = 0; i < v; i++) {
+            path[i] = src;
         }
     }
 
-    int src;
-    cout << "Enter the source vertex: ";
-    cin >> src;
+    int getmin(int f1, int f2) {
+        if (f1 < f2) {
+            return f1;
+        } else {
+            return f2;
+        }
+    }
 
-    dijkstra(graph, V, src);
+    int findMin() {
+        int min = MAX;
+        int min_index = 0;
+        for (int i = 0; i < v; i++) {
+            if (visited[i] == -1 && dist[i] <= min) {
+                min = dist[i];
+                min_index = i;
+            }
+        }
+        return min_index;
+    }
+
+    void dijkstra() {
+        for (int i = 0; i < v - 1; i++) {
+            int u = findMin();
+            visited[u] = 1;
+
+            for (int v = 0; v < this->v; v++) {
+                if (visited[v] == -1 && cm[u][v] && dist[u] + cm[u][v] < dist[v]) {
+                    dist[v] = dist[u] + cm[u][v];
+                    path[v] = u;
+                }
+            }
+        }
+    }
+};
+
+int main() {
+    Dijkstras dj;
+    dj.read();
+    dj.init();
+    for (int i = 0; i < dj.v; i++) {
+        dj.visited[i] = -1;
+    }
+    dj.dijkstra();
+
+    cout << "\nDistance array from source vertex " << dj.src << ":" << endl;
+    for (int i = 0; i < dj.v; i++) {
+        if (dj.dist[i] == MAX) {
+            cout << "Vertex " << i << " is unreachable" << endl;
+        } else {
+            cout << "Vertex " << i << ": " << dj.dist[i] << endl;
+        }
+    }
 
     return 0;
 }
